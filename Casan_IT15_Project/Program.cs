@@ -314,6 +314,65 @@ try
                 }
             }
         }
+
+        // Ensure transactional data exists for Jetro Manufacturing (CompanyId = 2)
+        if (!db.ProductionSchedules.Any(ps => ps.CompanyId == 2))
+        {
+            // 1. Materials
+            var mat1 = new Casan_IT15_Project.Models.Material { MaterialCode = "MAT-JETRO-001", MaterialName = "Aluminum Sheet", Description = "High grade aluminum", UnitOfMeasure = "kg", UnitCost = 15.50m, ReorderLevel = 100, MinimumOrderQty = 500, IsActive = true, CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+            var mat2 = new Casan_IT15_Project.Models.Material { MaterialCode = "MAT-JETRO-002", MaterialName = "Steel Bolt M8", Description = "Standard steel bolt", UnitOfMeasure = "pcs", UnitCost = 0.50m, ReorderLevel = 500, MinimumOrderQty = 1000, IsActive = true, CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+            var mat3 = new Casan_IT15_Project.Models.Material { MaterialCode = "MAT-JETRO-003", MaterialName = "Copper Wire", Description = "Insulated copper wire", UnitOfMeasure = "m", UnitCost = 3.20m, ReorderLevel = 200, MinimumOrderQty = 1000, IsActive = true, CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+            
+            db.Materials.AddRange(mat1, mat2, mat3);
+            db.SaveChanges();
+
+            // 2. Inventory
+            var inv1 = new Casan_IT15_Project.Models.InventoryItem { MaterialId = mat1.MaterialId, QuantityOnHand = 500, QuantityReserved = 0, WarehouseLocation = "Warehouse A", LastRestockedAt = DateTime.UtcNow, CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+            var inv2 = new Casan_IT15_Project.Models.InventoryItem { MaterialId = mat2.MaterialId, QuantityOnHand = 2000, QuantityReserved = 100, WarehouseLocation = "Warehouse B", LastRestockedAt = DateTime.UtcNow, CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+            var inv3 = new Casan_IT15_Project.Models.InventoryItem { MaterialId = mat3.MaterialId, QuantityOnHand = 50, QuantityReserved = 0, WarehouseLocation = "Warehouse A", LastRestockedAt = DateTime.UtcNow, CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+
+            db.InventoryItems.AddRange(inv1, inv2, inv3);
+
+            // 3. MRP
+            var mrp1 = new Casan_IT15_Project.Models.MrpRecord { MaterialId = mat3.MaterialId, RequiredQuantity = 300, AvailableQuantity = 50, Status = "Shortage", RequiredDate = DateTime.UtcNow.AddDays(7), CalculatedAt = DateTime.UtcNow, CompanyId = 2 };
+            var mrp2 = new Casan_IT15_Project.Models.MrpRecord { MaterialId = mat1.MaterialId, RequiredQuantity = 150, AvailableQuantity = 500, Status = "Sufficient", RequiredDate = DateTime.UtcNow.AddDays(14), CalculatedAt = DateTime.UtcNow, CompanyId = 2 };
+
+            db.MrpRecords.AddRange(mrp1, mrp2);
+
+            // 4. Production Schedules
+            var sched1 = new Casan_IT15_Project.Models.ProductionSchedule { ProductName = "Engine Block Alpha JETRO", PlannedQuantity = 100, StartDate = DateTime.UtcNow.AddDays(-2), EndDate = DateTime.UtcNow.AddDays(5), Status = "InProgress", Priority = "High", CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+            var sched2 = new Casan_IT15_Project.Models.ProductionSchedule { ProductName = "Transmission Unit B JETRO", PlannedQuantity = 50, StartDate = DateTime.UtcNow.AddDays(-10), EndDate = DateTime.UtcNow.AddDays(-1), Status = "Completed", Priority = "Medium", CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+
+            db.ProductionSchedules.AddRange(sched1, sched2);
+            db.SaveChanges();
+
+            // 5. Work Orders
+            var wo1 = new Casan_IT15_Project.Models.WorkOrder { WorkOrderNumber = "WO-JETRO-001", ProductName = "Engine Block Alpha JETRO", Quantity = 100, CompletedQuantity = 45, Status = "InProgress", Priority = "High", StartDate = DateTime.UtcNow.AddDays(-2), DueDate = DateTime.UtcNow.AddDays(5), AssignedTo = "supervisor_jetro", Notes = "Urgent batch", CreatedAt = DateTime.UtcNow, ScheduleId = sched1.ScheduleId, CompanyId = 2 };
+            var wo2 = new Casan_IT15_Project.Models.WorkOrder { WorkOrderNumber = "WO-JETRO-002", ProductName = "Transmission Unit B JETRO", Quantity = 50, CompletedQuantity = 50, Status = "Completed", Priority = "Medium", StartDate = DateTime.UtcNow.AddDays(-10), DueDate = DateTime.UtcNow.AddDays(-1), AssignedTo = "planner_jetro", Notes = "Standard run", CreatedAt = DateTime.UtcNow, ScheduleId = sched2.ScheduleId, CompanyId = 2 };
+            var wo3 = new Casan_IT15_Project.Models.WorkOrder { WorkOrderNumber = "WO-JETRO-003", ProductName = "Chassis Frame JETRO", Quantity = 200, CompletedQuantity = 0, Status = "Pending", Priority = "Low", StartDate = DateTime.UtcNow.AddDays(2), DueDate = DateTime.UtcNow.AddDays(15), AssignedTo = "supervisor_jetro", Notes = "Awaiting materials", CreatedAt = DateTime.UtcNow, ScheduleId = null, CompanyId = 2 };
+
+            db.WorkOrders.AddRange(wo1, wo2, wo3);
+            db.SaveChanges();
+
+            // 6. Quality Inspections
+            var qi1 = new Casan_IT15_Project.Models.QualityInspection { WorkOrderId = wo1.WorkOrderId, InspectorName = "quality_jetro", InspectionDate = DateTime.UtcNow, SampleSize = 10, PassedCount = 8, FailedCount = 2, Result = "Fail", Notes = "Surface scratch", CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+            var qi2 = new Casan_IT15_Project.Models.QualityInspection { WorkOrderId = wo2.WorkOrderId, InspectorName = "quality_jetro", InspectionDate = DateTime.UtcNow.AddDays(-2), SampleSize = 5, PassedCount = 5, FailedCount = 0, Result = "Pass", Notes = "All good", CreatedAt = DateTime.UtcNow.AddDays(-2), CompanyId = 2 };
+
+            db.QualityInspections.AddRange(qi1, qi2);
+            db.SaveChanges();
+
+            // 7. Defects
+            var defect1 = new Casan_IT15_Project.Models.Defect { InspectionId = qi1.InspectionId, DefectType = "Cosmetic", Severity = "Minor", DefectCount = 2, Description = "Surface scratch on panel", CorrectiveAction = "Rework", Status = "Open", ReportedAt = DateTime.UtcNow, CompanyId = 2 };
+            db.Defects.Add(defect1);
+
+            // 8. Production Costs
+            var cost1 = new Casan_IT15_Project.Models.ProductionCost { WorkOrderId = wo1.WorkOrderId, CostType = "Material", Description = "Raw Aluminum", Amount = 1500.00m, Currency = "PHP", IncurredDate = DateTime.UtcNow, CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+            var cost2 = new Casan_IT15_Project.Models.ProductionCost { WorkOrderId = wo1.WorkOrderId, CostType = "Labor", Description = "Assembly Line 1", Amount = 800.00m, Currency = "PHP", IncurredDate = DateTime.UtcNow, CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+            var cost3 = new Casan_IT15_Project.Models.ProductionCost { WorkOrderId = wo2.WorkOrderId, CostType = "Overhead", Description = "Electricity", Amount = 500.00m, Currency = "PHP", IncurredDate = DateTime.UtcNow, CreatedAt = DateTime.UtcNow, CompanyId = 2 };
+
+            db.ProductionCosts.AddRange(cost1, cost2, cost3);
+            db.SaveChanges();
+        }
     }
 }
 catch (Exception ex)
