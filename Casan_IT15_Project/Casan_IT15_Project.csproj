@@ -25,16 +25,16 @@
   </ItemGroup>
 
   <!-- NPM Tasks for Client App -->
-  <Target Name="CleanWwwRoot" BeforeTargets="NpmBuild">
+  <Target Name="CleanWwwRoot" BeforeTargets="NpmBuild" Condition="'$(SkipNpm)' != 'true'">
     <RemoveDir Directories="$(MSBuildThisFileDirectory)wwwroot\assets" />
     <MakeDir Directories="$(MSBuildThisFileDirectory)wwwroot" />
   </Target>
 
-  <Target Name="NpmInstall" BeforeTargets="NpmBuild" Condition="!Exists('$(MSBuildThisFileDirectory)..\client-app\node_modules')">
+  <Target Name="NpmInstall" BeforeTargets="NpmBuild" Condition="'$(SkipNpm)' != 'true' And !Exists('$(MSBuildThisFileDirectory)..\client-app\node_modules')">
     <Exec Command="npm install" WorkingDirectory="$(MSBuildThisFileDirectory)..\client-app" />
   </Target>
 
-  <Target Name="NpmBuild" BeforeTargets="Build;Publish">
+  <Target Name="NpmBuild" BeforeTargets="Build;Publish" Condition="'$(SkipNpm)' != 'true'">
     <Exec Command="npm run build" WorkingDirectory="$(MSBuildThisFileDirectory)..\client-app" />
   </Target>
 
