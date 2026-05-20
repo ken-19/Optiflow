@@ -10,14 +10,25 @@ using Casan_IT15_Project.Hubs;
 var builder = WebApplication.CreateBuilder(args);
 
 // ===== Database =====
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
-    {
-        sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null);
-    }));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
+if (connectionString.Contains("Data Source=") && connectionString.EndsWith(".db"))
+{
+    // SQLite mode
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(connectionString));
+}
+else
+{
+    // SQL Server mode
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(connectionString, sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        }));
+}
 
 // ===== JWT Authentication =====
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -75,7 +86,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "https://optiflowsystem101.runasp.net")
+        policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "https://optiflowsystem101.runasp.net", "http://32.198.37.105")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -122,13 +133,17 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Auto-apply migrations in Development (ensures local DB is always ready)
-if (app.Environment.IsDevelopment())
+// Auto-apply database schema (ensures DB is always ready)
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    if (connectionString.Contains(".db"))
     {
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        db.Database.Migrate();
+        db.Database.EnsureCreated(); // SQLite: create from model + seed
+    }
+    else
+    {
+        db.Database.Migrate(); // SQL Server: apply migrations
     }
 }
 
@@ -147,7 +162,10 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 app.UseStaticFiles();
 app.UseRouting();
 
