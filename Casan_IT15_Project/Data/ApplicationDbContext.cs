@@ -295,11 +295,83 @@ namespace Casan_IT15_Project.Data
                     UserId = 2,
                     Username = "admin_jetro@gmail.com",
                     Email = "admin_jetro@gmail.com",
-                    PasswordHash = "$2a$11$zUnFAZJQItyVsfm/pILx9uA6PRE95ACf9oaQ6rtSp47k6UgLZIRZe", // Same Admin@123 hash
+                    PasswordHash = "$2a$11$zUnFAZJQItyVsfm/pILx9uA6PRE95ACf9oaQ6rtSp47k6UgLZIRZe",
                     FirstName = "Admin",
                     LastName = "Jetro",
                     IsActive = true,
-                    CompanyId = 2, // Belongs to Jetro Manufacturing (Company 2)
+                    CompanyId = 2,
+                    CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new User
+                {
+                    UserId = 3,
+                    Username = "planner_jetro@gmail.com",
+                    Email = "planner_jetro@gmail.com",
+                    PasswordHash = "$2a$11$zUnFAZJQItyVsfm/pILx9uA6PRE95ACf9oaQ6rtSp47k6UgLZIRZe",
+                    FirstName = "Planner",
+                    LastName = "Jetro",
+                    IsActive = true,
+                    CompanyId = 2,
+                    CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new User
+                {
+                    UserId = 4,
+                    Username = "inventory_jetro@gmail.com",
+                    Email = "inventory_jetro@gmail.com",
+                    PasswordHash = "$2a$11$zUnFAZJQItyVsfm/pILx9uA6PRE95ACf9oaQ6rtSp47k6UgLZIRZe",
+                    FirstName = "Inventory",
+                    LastName = "Jetro",
+                    IsActive = true,
+                    CompanyId = 2,
+                    CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new User
+                {
+                    UserId = 5,
+                    Username = "cost_jetro@gmail.com",
+                    Email = "cost_jetro@gmail.com",
+                    PasswordHash = "$2a$11$zUnFAZJQItyVsfm/pILx9uA6PRE95ACf9oaQ6rtSp47k6UgLZIRZe",
+                    FirstName = "Cost",
+                    LastName = "Jetro",
+                    IsActive = true,
+                    CompanyId = 2,
+                    CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new User
+                {
+                    UserId = 6,
+                    Username = "supervisor_jetro@gmail.com",
+                    Email = "supervisor_jetro@gmail.com",
+                    PasswordHash = "$2a$11$zUnFAZJQItyVsfm/pILx9uA6PRE95ACf9oaQ6rtSp47k6UgLZIRZe",
+                    FirstName = "Supervisor",
+                    LastName = "Jetro",
+                    IsActive = true,
+                    CompanyId = 2,
+                    CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new User
+                {
+                    UserId = 7,
+                    Username = "quality_jetro@gmail.com",
+                    Email = "quality_jetro@gmail.com",
+                    PasswordHash = "$2a$11$zUnFAZJQItyVsfm/pILx9uA6PRE95ACf9oaQ6rtSp47k6UgLZIRZe",
+                    FirstName = "Quality",
+                    LastName = "Jetro",
+                    IsActive = true,
+                    CompanyId = 2,
+                    CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new User
+                {
+                    UserId = 8,
+                    Username = "manager_jetro@gmail.com",
+                    Email = "manager_jetro@gmail.com",
+                    PasswordHash = "$2a$11$zUnFAZJQItyVsfm/pILx9uA6PRE95ACf9oaQ6rtSp47k6UgLZIRZe",
+                    FirstName = "Manager",
+                    LastName = "Jetro",
+                    IsActive = true,
+                    CompanyId = 2,
                     CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }
             );
@@ -318,6 +390,48 @@ namespace Casan_IT15_Project.Data
                     UserRoleId = 2,
                     UserId = 2,
                     RoleId = 2, // Admin
+                    AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new UserRole
+                {
+                    UserRoleId = 3,
+                    UserId = 3,
+                    RoleId = 3, // Production Planner
+                    AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new UserRole
+                {
+                    UserRoleId = 4,
+                    UserId = 4,
+                    RoleId = 4, // Inventory Manager
+                    AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new UserRole
+                {
+                    UserRoleId = 5,
+                    UserId = 5,
+                    RoleId = 5, // Cost Accountant
+                    AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new UserRole
+                {
+                    UserRoleId = 6,
+                    UserId = 6,
+                    RoleId = 6, // Shop Floor Supervisor
+                    AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new UserRole
+                {
+                    UserRoleId = 7,
+                    UserId = 7,
+                    RoleId = 7, // Quality Control Inspector
+                    AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new UserRole
+                {
+                    UserRoleId = 8,
+                    UserId = 8,
+                    RoleId = 8, // Plant Manager
                     AssignedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }
             );
